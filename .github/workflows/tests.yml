@@ -1,0 +1,61 @@
+name: Cypress BDD
+on:
+  pull_request:
+  push:
+    branches: [main]
+  schedule:
+    - cron: '0 10 * * *'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run format:check
+  e2e:
+    needs: quality
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: ${{ github.event_name == 'pull_request' && fromJSON('["chrome"]') || fromJSON('["chrome", "firefox"]') }}
+    env:
+      CI: 'true'
+      CYPRESS_PROJECT_ID: ${{ vars.CYPRESS_PROJECT_ID }}
+      CYPRESS_RECORD_KEY: ${{ github.event_name != 'pull_request' && secrets.CYPRESS_RECORD_KEY || '' }}
+      CYPRESS_CLOUD_RECORD: ${{ github.event_name != 'pull_request' && 'true' || 'false' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - uses: browser-actions/setup-chrome@v2
+      - uses: browser-actions/setup-firefox@v1
+        if: matrix.browser == 'firefox'
+      - run: npm ci
+      - name: Run suite
+        run: node scripts/run-tests.js "$SUITE" "$BROWSER"
+        env:
+          SUITE: ${{ github.event_name == 'pull_request' && 'smoke' || 'regression' }}
+          BROWSER: ${{ matrix.browser }}
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: cypress-${{ matrix.browser }}
+          path: |
+            cypress/reports
+            cypress/screenshots
+            cypress/videos
+          retention-days: 14
+          if-no-files-found: warn
