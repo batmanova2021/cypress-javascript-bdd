@@ -9,9 +9,7 @@ const {
 const fix = require('cypress-on-fix');
 
 module.exports = defineConfig({
-  ...(process.env.CYPRESS_PROJECT_ID
-    ? { projectId: process.env.CYPRESS_PROJECT_ID }
-    : {}),
+  projectId: process.env.CYPRESS_PROJECT_ID || '67tngp',
   reporter: 'cypress-mochawesome-reporter',
   reporterOptions: {
     reportDir: 'cypress/reports',
