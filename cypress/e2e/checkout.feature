@@ -9,10 +9,10 @@ Feature: Checkout
     Then I see an error containing "<message>"
 
     Examples:
-      | field      | message                 |
-      | firstName  | First Name is required  |
-      | lastName   | Last Name is required   |
-      | postalCode | Postal Code is required |
+      | field       | message                 |
+      | first name  | First Name is required  |
+      | last name   | Last Name is required   |
+      | postal code | Postal Code is required |
 
   Scenario: Review order
     When I enter valid checkout details
@@ -21,7 +21,8 @@ Feature: Checkout
   @smoke
   Scenario: Complete an order
     When I enter valid checkout details
-    And I finish checkout
+    Then I see the checkout overview
+    When I finish checkout
     Then the order is complete
 
   Scenario: Cancel customer information

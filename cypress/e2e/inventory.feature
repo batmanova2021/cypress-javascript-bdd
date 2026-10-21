@@ -9,11 +9,11 @@ Feature: Inventory browsing
     Then product "<field>" values are sorted "<direction>"
 
     Examples:
-      | order | field | direction  |
-      | az    | name  | ascending  |
-      | za    | name  | descending |
-      | lohi  | price | ascending  |
-      | hilo  | price | descending |
+      | order             | field | direction  |
+      | name A to Z       | name  | ascending  |
+      | name Z to A       | name  | descending |
+      | price low to high | price | ascending  |
+      | price high to low | price | descending |
 
   Scenario: Inspect product details
     When I open the primary product

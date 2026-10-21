@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "allowJs": true,
+    "checkJs": false,
+    "noEmit": true,
+    "types": ["cypress"],
+    "target": "ES2022",
+    "module": "commonjs"
+  },
+  "include": ["cypress/**/*.js", "cypress/**/*.d.ts"],
+  "exclude": [
+    "node_modules",
+    "cypress/reports",
+    "cypress/videos",
+    "cypress/screenshots"
+  ]
+}
