@@ -33,6 +33,16 @@ Feature-level `@regression` tags apply to every scenario. `@smoke` selects succe
 
 Scenarios run independently. Authenticated scenarios use `cy.session()` to cache a standard-user login, validate its session cookie, and explicitly visit inventory after restoration. The inventory visit uses Sauce Demo’s GitHub Pages SPA query redirect (`/?/inventory.html`), because a direct request to the deep route returns HTTP 404. Cypress test isolation clears browser state between cases; no scenario relies on an earlier case. Prefer `data-test` selectors and retryable assertions, never arbitrary sleeps. Demo credentials are public Sauce Demo accounts; do not put real secrets in fixtures.
 
+## Reliability and selector conventions
+
+Product lookup matches exact product-title text and scopes Add/Remove actions to that item's container. Test attributes are preferred over styling classes, positional selectors, or component-library IDs. Sorting assertions use retryable `.should()` callbacks.
+
+Checkout captures product names, quantities, and prices from the cart before navigation, then verifies them in the overview. Subtotal and total arithmetic are checked in integer cents using the displayed tax; this verifies consistency, not an independently specified tax rate. The checkout smoke scenario verifies the overview before completing the order.
+
+Cached login validates the expected user's cookie and authenticated inventory access. Step definitions are separated into authentication, inventory, cart, checkout, and common reporting/error steps. Gherkin examples use readable sort choices and customer field names.
+
+`jsconfig.json` and `cypress/support/index.d.ts` provide JavaScript editor support for custom commands without migrating the project to TypeScript.
+
 ## Reports and diagnostics
 
 Each run generates Mochawesome HTML and JSON in `cypress/reports/` (open `index.html`). Failure screenshots are embedded in the standalone HTML report. Screenshots and videos also remain in `cypress/screenshots/` and `cypress/videos/`. These outputs are ignored by Git and overwritten by later runs; save/download any evidence you need before rerunning.
